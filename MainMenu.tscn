@@ -1,0 +1,126 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Sound/Fazza_MMenu.ogg" type="AudioStream" id=1]
+[ext_resource path="res://assets/FazzaWorldMMenu_BG.png" type="Texture" id=2]
+[ext_resource path="res://assets/FazzaWorldTitle.png" type="Texture" id=3]
+
+[sub_resource type="Animation" id=1]
+resource_name = "floating"
+length = 2.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Title:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1, 2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 707.096, 58.9132 ), Vector2( 710.974, 81.6279 ), Vector2( 707.096, 58.9132 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Title:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1, 2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1.48345, 1.84888 ), Vector2( 1.51325, 2.26993 ), Vector2( 1.48345, 1.84888 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Title:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 1, 2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 4.0, 0.0 ]
+}
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends AnimationPlayer
+
+func _ready():
+	play(\"floating\")
+"
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Button
+
+func _ready():
+	connect(\"button_down\", self, \"go\")
+
+func go():
+	get_tree().change_scene(\"res://Land.tscn\")
+"
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Button
+
+var diff = 0
+var diff_arr = [\"Easy\", \"Medium\", \"Hard\"]
+
+func _ready():
+	connect(\"button_down\", self, \"change\")
+	change()
+	
+func change():
+	diff = (diff + 1) % diff_arr.size()
+	text = \"Difficulty: \" + diff_arr[diff]
+	if (diff == 0):
+		G.wait_time = G.WAIT_TIME_EASY
+	elif diff == 1:
+		G.wait_time = G.WAIT_TIME_MEDIUM
+	else:
+		G.wait_time = G.WAIT_TIME_HARD
+"
+
+[node name="MMenu" type="Node2D"]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 1 )
+autoplay = true
+
+[node name="BG" type="Sprite" parent="."]
+position = Vector2( 513.752, 304.787 )
+scale = Vector2( 0.933608, 0.869077 )
+texture = ExtResource( 2 )
+
+[node name="Title" type="Sprite" parent="."]
+position = Vector2( 707.096, 58.9132 )
+scale = Vector2( 1.48345, 1.84888 )
+texture = ExtResource( 3 )
+
+[node name="animation" type="AnimationPlayer" parent="."]
+anims/floating = SubResource( 1 )
+script = SubResource( 2 )
+
+[node name="Play" type="Button" parent="."]
+margin_left = 840.0
+margin_top = 517.0
+margin_right = 1015.0
+margin_bottom = 595.0
+text = "Play"
+script = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Difficulty" type="Button" parent="."]
+margin_left = 770.527
+margin_top = 466.895
+margin_right = 1012.53
+margin_bottom = 505.895
+text = "Difficulty"
+script = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

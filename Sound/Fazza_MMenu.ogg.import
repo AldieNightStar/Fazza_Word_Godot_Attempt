@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/Fazza_MMenu.ogg-d76daf6f033f519773a56d4342f9a547.oggstr"
+
+[deps]
+
+source_file="res://Sound/Fazza_MMenu.ogg"
+dest_files=[ "res://.import/Fazza_MMenu.ogg-d76daf6f033f519773a56d4342f9a547.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

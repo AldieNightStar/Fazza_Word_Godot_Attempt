@@ -1,0 +1,101 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/Player.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends KinematicBody2D
+
+var look_right = true
+var speed = 5
+var can_jump = false
+var yvel = 0
+var map : TileMap
+var inventory : Inventory
+
+func _ready():
+	call_deferred(\"setup\")
+	BaseControllerUtil.new(self, \"go_left\", \"go_right\", \"jump\")
+	
+func setup():
+	map = get_parent().get_node(\"TileMap\")
+	inventory = Inventory.new()
+	map.inventory = inventory
+	_resize_in_pixels(map.cell_size.x, map.cell_size.y)
+
+func go_left():
+	look_right = false
+	var spr = get_node(\"spr\") as Sprite
+	spr.call(\"s_left\")
+	move_and_collide(Vector2(-speed, 0))
+
+func go_right():
+	look_right = true
+	var spr = get_node(\"spr\") as Sprite
+	spr.call(\"s_right\")
+	move_and_collide(Vector2(speed, 0))
+	
+func fall():
+	var c = move_and_collide(Vector2(0, yvel))
+	if ( c != null):
+		can_jump = true
+		yvel = 0
+	else:
+		yvel += 1;
+		can_jump = false
+		if (yvel > 10):
+			yvel = 10;
+
+func jump():
+	if (can_jump):
+		yvel = -12
+
+func _physics_process(delta):
+	fall()
+
+func _resize_in_pixels(w, h):
+	get_node(\"spr\").resize_in_pixels(w, h)
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Sprite
+
+var _dir_right = true
+
+func _ready():
+	region_enabled = true
+	scale.x = 1
+	scale.y = 1
+	
+
+func s_left():
+	_dir_right = false
+	region_rect = Rect2(
+		Vector2(0, 0), Vector2(20, 20)
+	)
+
+func s_right():
+	_dir_right = true
+	region_rect = Rect2(
+		Vector2(20, 0), Vector2(20, 20)
+	)
+
+func resize_in_pixels(w, h):
+		var size = Vector2(w, h) / region_rect.size
+		print(size, \" \", Vector2(w, h))
+		scale = size / 1.01
+		get_parent().get_node(\"shape\").scale = scale
+"
+
+[node name="Player" type="KinematicBody2D"]
+script = SubResource( 1 )
+
+[node name="shape" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )
+
+[node name="spr" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 20, 0, 20, 20 )
+script = SubResource( 3 )
